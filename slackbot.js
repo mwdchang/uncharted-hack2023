@@ -66,10 +66,7 @@ const handleRef = async (channelId, number, say) => {
   return say(llmResult); 
 }
 
-
-//Copy paste of handleSummary's first half
-//Used to grab channel history for a prompt
-const parseChannelHistory = async (channelId, number) => {
+const handleGif = async (channelId, number, say) => {
   const result = await app.client.conversations.history({
     channel: channelId
   });
@@ -84,23 +81,43 @@ const parseChannelHistory = async (channelId, number) => {
 
   const orderedMessages = filterdMessages.splice(0, number).reverse().map(d => d.text);
   const text = orderedMessages.join('\n');
-  return text;
-}
-
-
-const handleGif = async (channelId, number, say) => {
-  const text = await parseChannelHistory(channelId, number);
   const llmResult= await findMeGifs(text); 
   return say(llmResult); 
 }
 
 const handleAdditional = async (channelId, number, say) => {
-  const text = await parseChannelHistory(channelId, number);
+  const result = await app.client.conversations.history({
+    channel: channelId
+  });
+
+  const messages = result.messages;
+  const filterdMessages = messages.filter(d => {
+    return !d.subtype && 
+	  !d.bot_profile &&
+	  !d.text.startsWith(`<@${botUserId}>`) &&
+	  d.text.length > 2;
+  });
+
+  const orderedMessages = filterdMessages.splice(0, number).reverse().map(d => d.text);
+  const text = orderedMessages.join('\n');
   const llmResult= await additionalResources(text); 
   return say(llmResult); 
 }
 const handleDescribePeople = async (channelId, number, say) => {
-  const text = await parseChannelHistory(channelId, number);
+  const result = await app.client.conversations.history({
+    channel: channelId
+  });
+
+  const messages = result.messages;
+  const filterdMessages = messages.filter(d => {
+    return !d.subtype && 
+	  !d.bot_profile &&
+	  !d.text.startsWith(`<@${botUserId}>`) &&
+	  d.text.length > 2;
+  });
+
+  const orderedMessages = filterdMessages.splice(0, number).reverse().map(d => d.text);
+  const text = orderedMessages.join('\n');
   const llmResult= await describePeople(text); 
   return say(llmResult); 
 }
