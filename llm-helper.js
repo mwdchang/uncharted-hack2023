@@ -20,17 +20,21 @@ export const questionPrompt = async (text) => {
 
 // Summarize conversation
 export const summaryPrompt = async (text) => {
-  const res = await openai.createCompletion({
-    model: 'text-davinci-003',
-    max_tokens: 2500,
-    temperature: 0.02,
-    prompt: `
-	The following is a conversation: 
+  const prompt = `
+	The following is a group conversation: 
 
 	${text}
 
 	Summarize the conversation in a few short sentences.
-	`
+  `;
+
+  console.log('====\n', prompt, '\n===');
+
+  const res = await openai.createCompletion({
+    model: 'text-davinci-003',
+    max_tokens: 2500,
+    temperature: 0.02,
+    prompt: prompt
   });
   return res.data.choices[0].text; 
 }
