@@ -32,7 +32,7 @@ const handleSummary = async (channelId, number, say) => {
 	  d.text.length > 2;
   });
 
-  const orderedMessages = filterdMessages.reverse().map(d => d.text).splice(number);
+  const orderedMessages = filterdMessages.splice(0, number).reverse().map(d => d.text);
   const text = orderedMessages.join('\n');
   const llmResult= await summaryPrompt(text); 
   return say(llmResult); 
@@ -51,7 +51,7 @@ const handleRef = async (channelId, number, say) => {
 	  d.text.length > 2;
   });
 
-  const orderedMessages = filterdMessages.reverse().map(d => d.text).splice(number);
+  const orderedMessages = filterdMessages.splice(0, number).reverse().map(d => d.text);
   const text = orderedMessages.join('\n');
   const llmResult= await extendKnowledge(text); 
   return say(llmResult); 
@@ -73,7 +73,7 @@ const parseChannelHistory = async (channelId, number) => {
 	  d.text.length > 2;
   });
 
-  const orderedMessages = filterdMessages.reverse().map(d => d.text).splice(number);
+  const orderedMessages = filterdMessages.splice(0, number).reverse().map(d => d.text);
   const text = orderedMessages.join('\n');
   return text;
 }
@@ -157,7 +157,7 @@ app.message(/.*/, async ({ message, say }) => {
 		const res = await extendKnowledge(userText);
 		await say(res);
 	} else if (command === "gif") {
-     await handleGif(channelId, +userText, say);
+		await handleGif(channelId, +userText, say);
   }else if (command === "additional") {
     await handleAdditional(channelId, +userText, say);
   }
