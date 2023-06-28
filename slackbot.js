@@ -80,18 +80,18 @@ const parseChannelHistory = async (channelId, number) => {
 
 
 const handleGif = async (channelId, number, say) => {
-  const text = parseChannelHistory(channelId, number);
+  const text = await parseChannelHistory(channelId, number);
   const llmResult= await findMeGifs(text); 
   return say(llmResult); 
 }
 
 const handleAdditional = async (channelId, number, say) => {
-  const text = parseChannelHistory(channelId, number);
+  const text = await parseChannelHistory(channelId, number);
   const llmResult= await additionalResources(text); 
   return say(llmResult); 
 }
 const handleDescribePeople = async (channelId, number, say) => {
-  const text = parseChannelHistory(channelId, number);
+  const text = await parseChannelHistory(channelId, number);
   const llmResult= await describePeople(text); 
   return say(llmResult); 
 }
@@ -156,17 +156,16 @@ app.message(/.*/, async ({ message, say }) => {
 		userText = userText.replaceAll('```', '');
 		const res = await extendKnowledge(userText);
 		await say(res);
-	} else if (command === "gif") {
-		await handleGif(channelId, +userText, say);
-  }else if (command === "additional") {
-    await handleAdditional(channelId, +userText, say);
-  }
-  else if (command === "descriptions") {
-    await handleDescribePeople(channelId, +userText, say);
-  }
-  else {
-		await handleHelp(say);
-	}
+    } else if (command === "gif") {
+      await handleGif(channelId, +userText, say);
+    } else if (command === "additional") {
+      await handleAdditional(channelId, +userText, say);
+    } else if (command === "descriptions") {
+      await handleDescribePeople(channelId, +userText, say);
+    } else {
+      await handleHelp(say);
+    }
+>>>>>>> 0282bf495c23025f79a5263ee9ec3c7fec08f5f4
   }
 });
 
