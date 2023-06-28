@@ -6,15 +6,20 @@ const configuration = new Configuration({
 });
 
 const openai = new OpenAIApi(configuration);
+const MODEL = 'gpt-3.5-turbo';
+const MODEL2 = 'text-davinci-003';
 
 // Basic pass through
 export const questionPrompt = async (text) => {
-  const res = await openai.createCompletion({
-    model: 'text-davinci-003',
+  const res = await openai.createCatCompletion({
+    model: MODEL,
     max_tokens: 2000,
-    prompt: text
+    messages: [
+	  { role: 'system', content: 'Assistant is a large language model' },
+	  { role: 'user', content: prompt }
+	]
   });
-  return res.data.choices[0].text; 
+  return res.data.choices[0].message.content; 
 }
 
 
@@ -25,53 +30,85 @@ export const summaryPrompt = async (text) => {
 
 	${text}
 
-	Summarize the conversation in a few short sentences.
+	Summarize the conversation in a few short sentences. Outline the pont of view of each participants in the conversation.
   `;
 
   console.log('====\n', prompt, '\n===');
 
-  const res = await openai.createCompletion({
-    model: 'text-davinci-003',
+  const res = await openai.createChatCompletion({
+    model: MODEL,
     max_tokens: 2500,
     temperature: 0.02,
-    prompt: prompt
+    messages: [
+	  { role: 'system', content: 'Provide knowledge synthesize and act as a knowledge base' },
+	  { role: 'user', content: prompt }
+	]
   });
-  return res.data.choices[0].text; 
+  return res.data.choices[0].message.content; 
 }
 
 
-// Summarize conversation
+// Extend knowledge
 export const extendKnowledge = async (text) => {
   const prompt = `
 	The following is a group conversation that is technical and scentific in nature: 
 
 	${text}
 
-	Provide two lists, each list up to a maximum of 2 itmes:
-	- the first list scentific articles published in the last 3 years that supports the views expressed in the conversation above. 
-	- the second list articles published in the last 3 years that express opposite views in the conversation above.
+    Provide a breif summarization of the above conversation in a non-scientific manner.
 
-	Give preference to IEEE and ACM publications, the two lists cannot have repeated items, provide URL if available.
-
-	Return the first list with a "suport" heading, return the second list with an "refute" heading.
+	Provide two or three additional resources, such as articles, websites that provide additional information about the topics covered in the conversation above.
   `;
 
   console.log('====\n', prompt, '\n===');
 
-  const res = await openai.createCompletion({
-    model: 'text-davinci-003',
+  const res = await openai.createChatCompletion({
+    model: MODEL,
     max_tokens: 3500,
     temperature: 0.02,
-    prompt: prompt
+    messages: [
+	  { role: 'system', content: 'Provide knowledge synthesize and act as a knowledge base' },
+	  { role: 'user', content: prompt }
+	]
   });
-  return res.data.choices[0].text; 
+  return res.data.choices[0].message.content; 
 }
+
+
+
+// Extend knowledge
+// Bot making up nonsense
+// export const extendKnowledge_bad = async (text) => {
+//   const prompt = `
+// 	The following is a group conversation that is technical and scentific in nature: 
+// 
+// 	${text}
+// 
+// 	Provide two lists, each list up to a maximum of 2 itmes:
+// 	- the first list scentific articles published in the last 3 years that supports the views expressed in the conversation above. 
+// 	- the second list articles published in the last 3 years that express opposite views in the conversation above.
+// 
+// 	Give preference to IEEE and ACM publications, the two lists cannot have repeated items, provide URL if available.
+// 
+// 	Return the first list with a "suport" heading, return the second list with an "refute" heading.
+//   `;
+// 
+//   console.log('====\n', prompt, '\n===');
+// 
+//   const res = await openai.createCompletion({
+//     model: MODEL,
+//     max_tokens: 3500,
+//     temperature: 0.02,
+//     prompt: prompt
+//   });
+//   return res.data.choices[0].text; 
+// }
 
 
 //May be too similar to tldr2 for actual use
 export const summarizeArgument = async (text) => { 
   const res = await openai.createCompletion({
-    model: 'text-davinci-003',
+    model: MODEL2,
     max_tokens: 2500,
     temperature: 0.02,
     prompt: `
@@ -87,7 +124,7 @@ export const summarizeArgument = async (text) => {
 
 export const additionalResources = async (text) => { 
   const res = await openai.createCompletion({
-    model: 'text-davinci-003',
+    model: MODEL2,
     max_tokens: 2500,
     temperature: 0.02,
     prompt: `
@@ -103,7 +140,7 @@ export const additionalResources = async (text) => {
 
 export const findMeGifs = async (text) => { 
   const res = await openai.createCompletion({
-    model: 'text-davinci-003',
+    model: MODEL2,
     max_tokens: 2500,
     temperature: 0.02,
     prompt: `
