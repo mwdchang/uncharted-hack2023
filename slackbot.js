@@ -2,7 +2,7 @@ import pkg from '@slack/bolt';
 const { App } = pkg;
 
 import env from './env.json' assert { type: 'json' };
-import { questionPrompt, summaryPrompt, findMeGifs, additionalResources } from './llm-helper.js';
+import { questionPrompt, summaryPrompt, findMeGifs, additionalResources, extendKnowledge } from './llm-helper.js';
 
 
 const app = new App({
@@ -83,6 +83,9 @@ q <question>
 tldr [x=50] 
 - summarize roughly the last <x> number of messages
 
+tldr-block \`\`\`block\`\`\`
+- summarize roughly the last <x> number of messages
+
 additional [x=50]
 -Reads the last <x> messages and provides Additional Resources 
 
@@ -117,6 +120,10 @@ app.message(/.*/, async ({ message, say }) => {
 	} else if (command === 'tldr-block') {
 		userText = userText.replaceAll('```', '');
 		const res = await summaryPrompt(userText);
+		await say(res);
+    } else if (command === 'extend-block') {
+		userText = userText.replaceAll('```', '');
+		const res = await extendKnowledge(userText);
 		await say(res);
 	} else if (command === "gif") {
      await handleGif(channelId, +userText, say);

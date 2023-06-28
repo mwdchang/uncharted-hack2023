@@ -39,6 +39,33 @@ export const summaryPrompt = async (text) => {
   return res.data.choices[0].text; 
 }
 
+
+// Summarize conversation
+export const extendKnowledge = async (text) => {
+  const prompt = `
+	The following is a group conversation that is technical and scentific in nature: 
+
+	${text}
+
+	Provide two lists, each list up to a maximum of 3 itmes:
+	- the first list scentific articles published in the last 10 years that supports the views expressed in the conversation above. 
+	- the second list articles published in the last 10 years that express opposite views in the conversation above.
+
+	Give preference to IEEE and ACM publications
+  `;
+
+  console.log('====\n', prompt, '\n===');
+
+  const res = await openai.createCompletion({
+    model: 'text-davinci-003',
+    max_tokens: 3500,
+    temperature: 0.02,
+    prompt: prompt
+  });
+  return res.data.choices[0].text; 
+}
+
+
 //May be too similar to tldr2 for actual use
 export const summarizeArgument = async (text) => { 
   const res = await openai.createCompletion({
