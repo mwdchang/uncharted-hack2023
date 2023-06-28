@@ -19,11 +19,12 @@ const handleQuestion = async (text, say) => {
   return say(result);
 };
 
-const handleSummary = async (channelId, number, say) => {
+const userMap = {};
+
+const getHistory = async (channelId, number) => {
   const result = await app.client.conversations.history({
     channel: channelId
   });
-
   const messages = result.messages;
   const filterdMessages = messages.filter(d => {
     return !d.subtype && 
@@ -32,27 +33,35 @@ const handleSummary = async (channelId, number, say) => {
 	  d.text.length > 2;
   });
 
-  const orderedMessages = filterdMessages.splice(0, number).reverse().map(d => d.text);
-  const text = orderedMessages.join('\n');
+  const orderedMessages = filterdMessages.splice(0, number).reverse();
+  for (let i = 0; i < orderedMessages.length; i++) {
+	const msg = orderedMessages[i];
+	if (!userMap[msg.user]) {
+	  const r = await app.client.users.info({
+		 user: msg.user 
+	  });
+	  if (r) {
+		userMap[msg.user] = r.user.name;
+	  }
+	} 
+  }
+  const text = orderedMessages.map(d => {
+    return `${userMap[d.user]}: ${d.text}`;
+  }).join('\n');
+  return text;
+}
+
+
+const handleSummary = async (channelId, number, say) => {
+  const text = await getHistory(channelId, number);
+
   const llmResult= await summaryPrompt(text); 
   return say(llmResult); 
 }
 
 const handleRef = async (channelId, number, say) => {
-  const result = await app.client.conversations.history({
-    channel: channelId
-  });
+  const text = await getHistory(channelId, number);
 
-  const messages = result.messages;
-  const filterdMessages = messages.filter(d => {
-    return !d.subtype && 
-	  !d.bot_profile &&
-	  !d.text.startsWith(`<@${botUserId}>`) &&
-	  d.text.length > 2;
-  });
-
-  const orderedMessages = filterdMessages.splice(0, number).reverse().map(d => d.text);
-  const text = orderedMessages.join('\n');
   const llmResult= await extendKnowledge(text); 
   return say(llmResult); 
 }
@@ -139,8 +148,8 @@ app.message(/.*/, async ({ message, say }) => {
 	  userText = args.join(' ');
 	}
 
-	console.log('> commoand', command);
-	console.log('> userText', userText);
+	// console.log('> commoand', command);
+	// console.log('> userText', userText);
 
 	if (command === 'q') {
 		await handleQuestion(userText, say);

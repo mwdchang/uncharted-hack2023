@@ -33,7 +33,7 @@ export const summaryPrompt = async (text) => {
 	Summarize the conversation in a few short sentences. Outline the pont of view of each participants in the conversation.
   `;
 
-  console.log('====\n', prompt, '\n===');
+  // console.log('====\n', prompt, '\n===');
 
   const res = await openai.createChatCompletion({
     model: MODEL,
@@ -60,7 +60,7 @@ export const extendKnowledge = async (text) => {
 	Provide two or three additional resources, such as articles, websites that provide additional information about the topics covered in the conversation above.
   `;
 
-  console.log('====\n', prompt, '\n===');
+  // console.log('====\n', prompt, '\n===');
 
   const res = await openai.createChatCompletion({
     model: MODEL,
