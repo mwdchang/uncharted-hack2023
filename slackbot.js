@@ -156,17 +156,16 @@ app.message(/.*/, async ({ message, say }) => {
 		userText = userText.replaceAll('```', '');
 		const res = await extendKnowledge(userText);
 		await say(res);
-	} else if (command === "gif") {
-     await handleGif(channelId, +userText, say);
-  }else if (command === "additional") {
-    await handleAdditional(channelId, +userText, say);
-  }
-  else if (command === "descriptions") {
-    await handleDescribePeople(channelId, +userText, say);
-  }
-  else {
-		await handleHelp(say);
-	}
+    } else if (command === "gif") {
+      await handleGif(channelId, +userText, say);
+    }else if (command === "additional") {
+      await handleAdditional(channelId, +userText, say);
+    }else if (command === "descriptions") {
+      await handleDescribePeople(channelId, +userText, say);
+    }
+    else {
+      await handleHelp(say);
+    }
   }
 });
 
