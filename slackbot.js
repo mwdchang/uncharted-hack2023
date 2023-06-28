@@ -58,7 +58,7 @@ app.message(/.*/, async ({ message, say }) => {
 	const channelId = message.channel;
 
 	// Parse message
-	const [_id, command, ...args] = message.text.split(' ');
+	const [_id, command, ...args] = message.text.split(/(\s|\n)/);
 	const userText = args.join(' ');
 	console.log(command, userText);
 
