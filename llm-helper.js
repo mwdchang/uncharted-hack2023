@@ -19,7 +19,7 @@ export const questionPrompt = async (text) => {
 	  { role: 'user', content: prompt }
 	]
   });
-  return res.data.choices[0].message; 
+  return res.data.choices[0].message.content; 
 }
 
 
@@ -40,11 +40,11 @@ export const summaryPrompt = async (text) => {
     max_tokens: 2500,
     temperature: 0.02,
     messages: [
-	  { role: 'system', content: 'You are to act like a personal assistant' },
+	  { role: 'system', content: 'Provide knowledge synthesize and act as a knowledge base' },
 	  { role: 'user', content: prompt }
 	]
   });
-  return res.data.choices[0].message; 
+  return res.data.choices[0].message.content; 
 }
 
 
@@ -71,7 +71,7 @@ export const extendKnowledge = async (text) => {
 	  { role: 'user', content: prompt }
 	]
   });
-  return res.data.choices[0].message; 
+  return res.data.choices[0].message.content; 
 }
 
 
