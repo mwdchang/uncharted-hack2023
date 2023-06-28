@@ -60,7 +60,8 @@ app.message(/.*/, async ({ message, say }) => {
 	// Parse message
 	const [_id, command, ...args] = message.text.split(/(\s|\n)/);
 	const userText = args.join(' ');
-	console.log(command, userText);
+	console.log('> commoand', command);
+	console.log('> userText', userText);
 
 	if (command === 'q') {
 		await handleQuestion(userText, say);
