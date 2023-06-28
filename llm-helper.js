@@ -35,5 +35,21 @@ export const summaryPrompt = async (text) => {
   return res.data.choices[0].text; 
 }
 
+export const summarizeArgument = async (text) => { 
+  const res = await openai.createCompletion({
+    model: 'text-davinci-003',
+    max_tokens: 2500,
+    temperature: 0.02,
+    prompt: `
+	The following is a conversation: 
+
+	${text}
+
+	Summarize the main point of views of each person.
+	`
+  });
+  return res.data.choices[0].text; 
+
+}
 
 // Synthesize new knowledge
