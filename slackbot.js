@@ -63,7 +63,7 @@ app.message(/.*/, async ({ message, say }) => {
 	  [command, ...args] = command.split('\n');
 	}
 
-	const userText = args.join(' ');
+	let userText = args.join(' ');
 	console.log('> commoand', command);
 	console.log('> userText', userText);
 
