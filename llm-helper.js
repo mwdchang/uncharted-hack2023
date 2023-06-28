@@ -45,7 +45,7 @@ export const summarizeArgument = async (text) => {
 
 	${text}
 
-	Summarize the main point of views of each person.
+	Summarize the main points of a conversation between the people discussing a conflict they are having.
 	`
   });
   return res.data.choices[0].text; 
