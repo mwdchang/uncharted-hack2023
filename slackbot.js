@@ -59,11 +59,14 @@ app.message(/.*/, async ({ message, say }) => {
 
 	// Parse message
 	let [_id, command, ...args] = message.text.split(' ');
+	let userText = '';
 	if (command.includes('\n') && command.includes('```')) {
 	  [command, ...args] = command.split('\n');
+	  userText = message.text.substring(message.text.indexOf('```'), 9999);
+	} else {
+	  userText = args.join(' ');
 	}
 
-	let userText = args.join(' ');
 	console.log('> commoand', command);
 	console.log('> userText', userText);
 
@@ -71,7 +74,7 @@ app.message(/.*/, async ({ message, say }) => {
 		await handleQuestion(userText, say);
 	} else if (command === 'tldr') {
 		await handleSummary(channelId, +userText, say);
-	} else if (command === 'tldr-debug') {
+	} else if (command === 'tldr-block') {
 		userText = userText.replaceAll('```', '');
 		const res = await summaryPrompt(userText);
 		await say(res);
