@@ -42,15 +42,14 @@ const handleHelp = async (say) => {
   \`\`\`
 Usage is @bot <command> <context>:
 The commands are:
-Q <question>
+q <question>
 - basically a chatGPT proxy
 
-S [x=50] 
+tldr [x=50] 
 - summarize roughly the last <x> number of messages
   \`\`\`
   `);
 };
-
 
 app.message(/.*/, async ({ message, say }) => {
   if (message.text.startsWith(`<@${botUserId}>`)) {
@@ -62,8 +61,8 @@ app.message(/.*/, async ({ message, say }) => {
 	const userText = args.join(' ');
 	console.log(command, userText);
 
-	if (command === 'Q') await handleQuestion(userText, say);
-	else if (command === 'S') await handleSummary(channelId, +userText, say);
+	if (command === 'q') await handleQuestion(userText, say);
+	else if (command === 'tldr') await handleSummary(channelId, +userText, say);
     else await handleHelp(say);
   }
 });
