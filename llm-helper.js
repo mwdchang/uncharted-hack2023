@@ -115,5 +115,19 @@ export const findMeGifs = async (text) => {
   return res.data.choices[0].text; 
 }
 
+export const describePeople = async (text) => { 
+  const res = await openai.createCompletion({
+    model: 'text-davinci-003',
+    max_tokens: 2500,
+    temperature: 0.02,
+    prompt: `
+	The following is a conversation: 
 
+	${text}
+
+	For each person in this conversation give me a strength of theirs and what topics I can ask them about
+	`
+  });
+  return res.data.choices[0].text; 
+}
 // Synthesize new knowledge

@@ -2,7 +2,7 @@ import pkg from '@slack/bolt';
 const { App } = pkg;
 
 import env from './env.json' assert { type: 'json' };
-import { questionPrompt, summaryPrompt, findMeGifs, additionalResources, extendKnowledge } from './llm-helper.js';
+import { questionPrompt, summaryPrompt, findMeGifs, additionalResources, extendKnowledge, describePeople } from './llm-helper.js';
 
 
 const app = new App({
@@ -70,6 +70,11 @@ const handleAdditional = async (channelId, number, say) => {
   const llmResult= await additionalResources(text); 
   return say(llmResult); 
 }
+const handleDescribePeople = async (channelId, number, say) => {
+  const text = parseChannelHistory(channelId, number);
+  const llmResult= await describePeople(text); 
+  return say(llmResult); 
+}
 
 
 const handleHelp = async (say) => {
@@ -91,6 +96,10 @@ additional [x=50]
 
 gif [x=50]
 -Reads the last <x> messages and provides gif reaction search
+
+descriptions
+-Reads the chat and provides a description of the users in the channel.
+What are some of their strengths and what are some of the topics you can ask them about
   \`\`\`
   `);
 };
@@ -129,6 +138,9 @@ app.message(/.*/, async ({ message, say }) => {
      await handleGif(channelId, +userText, say);
   }else if (command === "additional") {
     await handleAdditional(channelId, +userText, say);
+  }
+  else if (command === "descriptions") {
+    await handleDescribePeople(channelId, +userText, say);
   }
   else {
 		await handleHelp(say);
