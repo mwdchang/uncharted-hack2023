@@ -1,4 +1,4 @@
-import { questionPrompt, summarizeArgument, additionalResources, findMeGifs } from './llm-helper.js';
+import { questionPrompt, summarizeArgument, additionalResources, findMeGifs, giveMeTodoList, describePeople } from './llm-helper.js';
 
 const Q = 'what is 1 + 2 + 3 + 4?';
 console.log(Q);
@@ -20,3 +20,8 @@ console.log(answer);
 // console.log(giveMeGif);
 // const reactionGifURL = await findMeGifs(giveMeGif);
 // console.log(reactionGifURL);
+
+// const descPeopleMessage = " Daniel Chang 2:50 PM Well, ask yourself, when you are dropped into a slack channel or invited into a group conversation, what is it that you want to do? 2:51 [INFO]  socket-mode:SocketModeClient:0 Now connected to Slack > commoand additional > userText 10 [ERROR]  bolt-app UnknownError: say is not a function 2:51 if you are in the midst of a conversation, what do you wish you have? Tom Szendrey   2:51 PM Fair point Summarize what the channel’s entire purpose is or the last few messages at least Ask who everyone is - that could be cool Maybe check what times the channel is used at Daniel Chang   2:52 PM Well, for 2, you might be able to craft a prompt that discovers what are the strength of each individual :53 @azul  help";
+// console.log(descPeopleMessage);
+// const peopleDescription = await describePeople(descPeopleMessage);
+// console.log(peopleDescription);
