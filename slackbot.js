@@ -80,18 +80,18 @@ const parseChannelHistory = async (channelId, number) => {
 
 
 const handleGif = async (channelId, number, say) => {
-  const text = parseChannelHistory(channelId, number);
+  const text = await parseChannelHistory(channelId, number);
   const llmResult= await findMeGifs(text); 
   return say(llmResult); 
 }
 
 const handleAdditional = async (channelId, number, say) => {
-  const text = parseChannelHistory(channelId, number);
+  const text = await parseChannelHistory(channelId, number);
   const llmResult= await additionalResources(text); 
   return say(llmResult); 
 }
 const handleDescribePeople = async (channelId, number, say) => {
-  const text = parseChannelHistory(channelId, number);
+  const text = await parseChannelHistory(channelId, number);
   const llmResult= await describePeople(text); 
   return say(llmResult); 
 }
