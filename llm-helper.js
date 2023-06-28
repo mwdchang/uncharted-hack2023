@@ -35,6 +35,7 @@ export const summaryPrompt = async (text) => {
   return res.data.choices[0].text; 
 }
 
+//May be too similar to tldr2 for actual use
 export const summarizeArgument = async (text) => { 
   const res = await openai.createCompletion({
     model: 'text-davinci-003',
@@ -45,11 +46,27 @@ export const summarizeArgument = async (text) => {
 
 	${text}
 
-	Summarize the main points of a conversation between the people discussing a conflict they are having.
+	Summarize the main points of a conversation between the people discussing a conflict they are having with one sentence per person.
 	`
   });
   return res.data.choices[0].text; 
-
 }
+
+export const additionalResources = async (text) => { 
+  const res = await openai.createCompletion({
+    model: 'text-davinci-003',
+    max_tokens: 2500,
+    temperature: 0.02,
+    prompt: `
+	The following is a conversation: 
+
+	${text}
+
+	Provide me additional resources for my understanding based off of the topics discussed in this conversation.
+	`
+  });
+  return res.data.choices[0].text; 
+}
+
 
 // Synthesize new knowledge
