@@ -11,7 +11,7 @@ const MODEL2 = 'text-davinci-003';
 
 // Basic pass through
 export const questionPrompt = async (text) => {
-  const res = await openai.createCompletion({
+  const res = await openai.createCatCompletion({
     model: MODEL,
     max_tokens: 2000,
     messages: [
@@ -35,7 +35,7 @@ export const summaryPrompt = async (text) => {
 
   console.log('====\n', prompt, '\n===');
 
-  const res = await openai.createCompletion({
+  const res = await openai.createChatCompletion({
     model: MODEL,
     max_tokens: 2500,
     temperature: 0.02,
