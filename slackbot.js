@@ -2,7 +2,7 @@ import pkg from '@slack/bolt';
 const { App } = pkg;
 
 import env from './env.json' assert { type: 'json' };
-import { questionPrompt, summaryPrompt } from './llm-helper.js';
+import { questionPrompt, summaryPrompt, findMeGifs, additionalResources } from './llm-helper.js';
 
 
 const app = new App({
@@ -38,6 +38,40 @@ const handleSummary = async (channelId, number, say) => {
   return say(llmResult); 
 }
 
+//Copy paste of handleSummary's first half
+//Used to grab channel history for a prompt
+const parseChannelHistory = async (channelId, number) => {
+  const result = await app.client.conversations.history({
+    channel: channelId
+  });
+
+  const messages = result.messages;
+  const filterdMessages = messages.filter(d => {
+    return !d.subtype && 
+	  !d.bot_profile &&
+	  !d.text.startsWith(`<@${botUserId}>`) &&
+	  d.text.length > 2;
+  });
+
+  const orderedMessages = filterdMessages.reverse().map(d => d.text).splice(number);
+  const text = orderedMessages.join('\n');
+  return text;
+}
+
+
+const handleGif = async (channelId, number, say) => {
+  const text = parseChannelHistory(channelId, number);
+  const llmResult= await findMeGifs(text); 
+  return say(llmResult); 
+}
+
+const handleAdditional = async (channelId, number, say) => {
+  const text = parseChannelHistory(channelId, number);
+  const llmResult= await additionalResources(text); 
+  return say(llmResult); 
+}
+
+
 const handleHelp = async (say) => {
   return say(`
   \`\`\`
@@ -48,6 +82,12 @@ q <question>
 
 tldr [x=50] 
 - summarize roughly the last <x> number of messages
+
+additional [x=50]
+-Reads the last <x> messages and provides Additional Resources 
+
+gif [x=50]
+-Reads the last <x> messages and provides gif reaction search
   \`\`\`
   `);
 };
@@ -75,7 +115,12 @@ app.message(/.*/, async ({ message, say }) => {
 		userText = userText.replaceAll('```', '');
 		const res = await summaryPrompt(userText);
 		await say(res);
-	} else {
+	} else if (command === "gif") {
+     await handleGif(channelId, +userText, say);
+  }else if (command === "additional") {
+    await handleAdditional(channelId, +userText);
+  }
+  else {
 		await handleHelp(say);
 	}
   }
