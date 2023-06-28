@@ -165,7 +165,6 @@ app.message(/.*/, async ({ message, say }) => {
     } else {
       await handleHelp(say);
     }
->>>>>>> 0282bf495c23025f79a5263ee9ec3c7fec08f5f4
   }
 });
 
