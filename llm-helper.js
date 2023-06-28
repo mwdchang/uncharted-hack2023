@@ -72,5 +72,21 @@ export const additionalResources = async (text) => {
   return res.data.choices[0].text; 
 }
 
+export const findMeGifs = async (text) => { 
+  const res = await openai.createCompletion({
+    model: 'text-davinci-003',
+    max_tokens: 2500,
+    temperature: 0.02,
+    prompt: `
+	The following is a conversation: 
+
+	${text}
+
+	give me a search for gif reactions to the conversation like: https://giphy.com/search/ 
+	`
+  });
+  return res.data.choices[0].text; 
+}
+
 
 // Synthesize new knowledge
