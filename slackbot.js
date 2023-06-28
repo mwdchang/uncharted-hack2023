@@ -4,6 +4,7 @@ const { App } = pkg;
 import env from './env.json' assert { type: 'json' };
 import { questionPrompt, summaryPrompt } from './llm-helper.js';
 
+
 const app = new App({
   token: env.OAUTH_TOKEN,
   signingSecret: env.SIGNING_SECRET,
@@ -61,9 +62,17 @@ app.message(/.*/, async ({ message, say }) => {
 	const userText = args.join(' ');
 	console.log(command, userText);
 
-	if (command === 'q') await handleQuestion(userText, say);
-	else if (command === 'tldr') await handleSummary(channelId, +userText, say);
-    else await handleHelp(say);
+	if (command === 'q') {
+		await handleQuestion(userText, say);
+	} else if (command === 'tldr') {
+		await handleSummary(channelId, +userText, say);
+	} else if (command === 'tldr-debug') {
+		userText = userText.replaceAll('```', '');
+		const res = await summaryPrompt(userText);
+		await say(res);
+	} else {
+		await handleHelp(say);
+	}
   }
 });
 
