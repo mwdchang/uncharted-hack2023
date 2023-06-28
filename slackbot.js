@@ -121,7 +121,7 @@ app.message(/.*/, async ({ message, say }) => {
 	} else if (command === "gif") {
      await handleGif(channelId, +userText, say);
   }else if (command === "additional") {
-    await handleAdditional(channelId, +userText);
+    await handleAdditional(channelId, +userText, say);
   }
   else {
 		await handleHelp(say);
