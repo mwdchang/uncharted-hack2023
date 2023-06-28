@@ -38,6 +38,26 @@ const handleSummary = async (channelId, number, say) => {
   return say(llmResult); 
 }
 
+const handleRef = async (channelId, number, say) => {
+  const result = await app.client.conversations.history({
+    channel: channelId
+  });
+
+  const messages = result.messages;
+  const filterdMessages = messages.filter(d => {
+    return !d.subtype && 
+	  !d.bot_profile &&
+	  !d.text.startsWith(`<@${botUserId}>`) &&
+	  d.text.length > 2;
+  });
+
+  const orderedMessages = filterdMessages.reverse().map(d => d.text).splice(number);
+  const text = orderedMessages.join('\n');
+  const llmResult= await extendKnowledge(text); 
+  return say(llmResult); 
+}
+
+
 //Copy paste of handleSummary's first half
 //Used to grab channel history for a prompt
 const parseChannelHistory = async (channelId, number) => {
@@ -83,7 +103,7 @@ q <question>
 tldr [x=50] 
 - summarize roughly the last <x> number of messages
 
-tldr-block \`\`\`block\`\`\`
+tldr-block <triple backtick block>
 - summarize roughly the last <x> number of messages
 
 additional [x=50]
@@ -121,7 +141,9 @@ app.message(/.*/, async ({ message, say }) => {
 		userText = userText.replaceAll('```', '');
 		const res = await summaryPrompt(userText);
 		await say(res);
-    } else if (command === 'extend-block') {
+    } else if (command === 'ref') {
+		await handleRef(channelId, +userText, say);
+    } else if (command === 'ref-block') {
 		userText = userText.replaceAll('```', '');
 		const res = await extendKnowledge(userText);
 		await say(res);

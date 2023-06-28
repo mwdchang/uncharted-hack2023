@@ -47,11 +47,13 @@ export const extendKnowledge = async (text) => {
 
 	${text}
 
-	Provide two lists, each list up to a maximum of 3 itmes:
-	- the first list scentific articles published in the last 10 years that supports the views expressed in the conversation above. 
-	- the second list articles published in the last 10 years that express opposite views in the conversation above.
+	Provide two lists, each list up to a maximum of 2 itmes:
+	- the first list scentific articles published in the last 3 years that supports the views expressed in the conversation above. 
+	- the second list articles published in the last 3 years that express opposite views in the conversation above.
 
-	Give preference to IEEE and ACM publications
+	Give preference to IEEE and ACM publications, the two lists cannot have repeated items, provide URL if available.
+
+	Return the first list with a "suport" heading, return the second list with an "refute" heading.
   `;
 
   console.log('====\n', prompt, '\n===');
