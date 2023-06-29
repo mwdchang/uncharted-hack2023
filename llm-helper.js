@@ -11,7 +11,7 @@ const MODEL2 = 'text-davinci-003';
 
 // Basic pass through
 export const questionPrompt = async (text) => {
-  const res = await openai.createCatCompletion({
+  const res = await openai.createChatCompletion({
     model: MODEL,
     max_tokens: 2000,
     messages: [

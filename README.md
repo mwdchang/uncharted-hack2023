@@ -1,5 +1,6 @@
 ### Prereq
-Copy `env.sample.json` to `env.json` and fill out the credentials.
+- Copy `env.sample.json` to `env.json` and fill out the credentials.
+- NodeJS 18
 
 ### Run LLM usecases by themselves
 - Copy openAI key into `env.json`
