@@ -2,7 +2,7 @@ import pkg from '@slack/bolt';
 const { App } = pkg;
 
 import env from './env.json' assert { type: 'json' };
-import { questionPrompt, summaryPrompt, findMeGifs, additionalResources, extendKnowledge, describePeople } from './llm-helper.js';
+import { questionPrompt, summaryPrompt, findMeGifs, additionalResources, expandKnowledge, describePeople } from './llm-helper.js';
 
 
 const app = new App({
@@ -62,7 +62,7 @@ const handleSummary = async (channelId, number, say) => {
 const handleRef = async (channelId, number, say) => {
   const text = await getHistory(channelId, number);
 
-  const llmResult= await extendKnowledge(text); 
+  const llmResult= await expandKnowledge(text); 
   return say(llmResult); 
 }
 
@@ -180,7 +180,7 @@ app.message(/.*/, async ({ message, say }) => {
 		await handleRef(channelId, +userText, say);
     } else if (command === 'ref-block') {
 		userText = userText.replaceAll('```', '');
-		const res = await extendKnowledge(userText);
+		const res = await expandKnowledge(userText);
 		await say(res);
     } else if (command === "gif") {
       await handleGif(channelId, +userText, say);

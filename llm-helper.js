@@ -16,7 +16,7 @@ export const questionPrompt = async (text) => {
     max_tokens: 2000,
     messages: [
 	  { role: 'system', content: 'Assistant is a large language model' },
-	  { role: 'user', content: prompt }
+	  { role: 'user', content: text}
 	]
   });
   return res.data.choices[0].message.content; 
@@ -49,7 +49,7 @@ export const summaryPrompt = async (text) => {
 
 
 // Extend knowledge
-export const extendKnowledge = async (text) => {
+export const expandKnowledge = async (text) => {
   const prompt = `
 	The following is a group conversation that is technical and scentific in nature: 
 
@@ -78,31 +78,30 @@ export const extendKnowledge = async (text) => {
 
 // Extend knowledge
 // Bot making up nonsense
-// export const extendKnowledge_bad = async (text) => {
-//   const prompt = `
-// 	The following is a group conversation that is technical and scentific in nature: 
-// 
-// 	${text}
-// 
-// 	Provide two lists, each list up to a maximum of 2 itmes:
-// 	- the first list scentific articles published in the last 3 years that supports the views expressed in the conversation above. 
-// 	- the second list articles published in the last 3 years that express opposite views in the conversation above.
-// 
-// 	Give preference to IEEE and ACM publications, the two lists cannot have repeated items, provide URL if available.
-// 
-// 	Return the first list with a "suport" heading, return the second list with an "refute" heading.
-//   `;
-// 
-//   console.log('====\n', prompt, '\n===');
-// 
-//   const res = await openai.createCompletion({
-//     model: MODEL,
-//     max_tokens: 3500,
-//     temperature: 0.02,
-//     prompt: prompt
-//   });
-//   return res.data.choices[0].text; 
-// }
+export const expandKnowledge2 = async (text) => {
+  const prompt = `
+	The following is a group conversation that is technical and scentific in nature: 
+
+	${text}
+
+	Provide a lists of scientific publications in the last 3 years that matches up with the topics and discussion points in the convrsation above.
+
+	Give preference to IEEE and ACM publications, provide URL if available.
+  `;
+
+  console.log('====\n', prompt, '\n===');
+
+  const res = await openai.createChatCompletion({
+    model: MODEL,
+    max_tokens: 3500,
+    temperature: 0.02,
+    messages: [
+	  { role: 'system', content: 'Provide knowledge synthesize and act as a knowledge base' },
+	  { role: 'user', content: prompt }
+	]
+  });
+  return res.data.choices[0].message.content; 
+}
 
 
 //May be too similar to tldr2 for actual use
