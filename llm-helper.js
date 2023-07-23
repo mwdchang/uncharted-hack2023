@@ -69,22 +69,6 @@ export const expandKnowledge = async (text) => {
   return res.data.choices[0].message.content; 
 }
 
-export const additionalResources = async (text) => { 
-  const res = await openai.createCompletion({
-    model: MODEL,
-    max_tokens: 2500,
-    temperature: 0.02,
-    prompt: `
-	The following is a conversation: 
-
-	${text}
-
-	Provide me additional resources for my understanding based off of the topics discussed in this conversation.
-	`
-  });
-  return res.data.choices[0].text; 
-}
-
 export const findMeGifs = async (text) => { 
   const text = `
 	The following is a conversation: 

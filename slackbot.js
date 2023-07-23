@@ -2,8 +2,13 @@ import pkg from '@slack/bolt';
 const { App } = pkg;
 
 import env from './env.json' assert { type: 'json' };
-import { questionPrompt, summaryPrompt, findMeGifs, additionalResources, expandKnowledge, describePeople } from './llm-helper.js';
-
+import { 
+  questionPrompt,
+  summaryPrompt,
+  findMeGifs,
+  expandKnowledge,
+  describePeople
+} from './llm-helper.js';
 
 const app = new App({
   token: env.OAUTH_TOKEN,
@@ -21,6 +26,10 @@ const handleQuestion = async (text, say) => {
 
 const userMap = {};
 
+// Graph history conversations from the channel, ignoreing
+// - bot replaies
+// - bot requests
+// - message less than 3 characters
 const getHistory = async (channelId, number) => {
   const result = await app.client.conversations.history({
     channel: channelId
@@ -54,70 +63,24 @@ const getHistory = async (channelId, number) => {
 
 const handleSummary = async (channelId, number, say) => {
   const text = await getHistory(channelId, number);
-
   const llmResult= await summaryPrompt(text); 
   return say(llmResult); 
 }
 
 const handleRef = async (channelId, number, say) => {
   const text = await getHistory(channelId, number);
-
   const llmResult= await expandKnowledge(text); 
   return say(llmResult); 
 }
 
 const handleGif = async (channelId, number, say) => {
-  const result = await app.client.conversations.history({
-    channel: channelId
-  });
-
-  const messages = result.messages;
-  const filterdMessages = messages.filter(d => {
-    return !d.subtype && 
-	  !d.bot_profile &&
-	  !d.text.startsWith(`<@${botUserId}>`) &&
-	  d.text.length > 2;
-  });
-
-  const orderedMessages = filterdMessages.splice(0, number).reverse().map(d => d.text);
-  const text = orderedMessages.join('\n');
+  const text = getHistory(channelId, number);
   const llmResult= await findMeGifs(text); 
   return say(llmResult); 
 }
 
-const handleAdditional = async (channelId, number, say) => {
-  const result = await app.client.conversations.history({
-    channel: channelId
-  });
-
-  const messages = result.messages;
-  const filterdMessages = messages.filter(d => {
-    return !d.subtype && 
-	  !d.bot_profile &&
-	  !d.text.startsWith(`<@${botUserId}>`) &&
-	  d.text.length > 2;
-  });
-
-  const orderedMessages = filterdMessages.splice(0, number).reverse().map(d => d.text);
-  const text = orderedMessages.join('\n');
-  const llmResult= await additionalResources(text); 
-  return say(llmResult); 
-}
 const handleDescribePeople = async (channelId, number, say) => {
-  const result = await app.client.conversations.history({
-    channel: channelId
-  });
-
-  const messages = result.messages;
-  const filterdMessages = messages.filter(d => {
-    return !d.subtype && 
-	  !d.bot_profile &&
-	  !d.text.startsWith(`<@${botUserId}>`) &&
-	  d.text.length > 2;
-  });
-
-  const orderedMessages = filterdMessages.splice(0, number).reverse().map(d => d.text);
-  const text = orderedMessages.join('\n');
+  const text = getHistory(channelId, number);
   const llmResult= await describePeople(text); 
   return say(llmResult); 
 }
@@ -165,9 +128,6 @@ app.message(/.*/, async ({ message, say }) => {
 	  userText = args.join(' ');
 	}
 
-	// console.log('> commoand', command);
-	// console.log('> userText', userText);
-
 	if (command === 'q') {
 		await handleQuestion(userText, say);
 	} else if (command === 'tldr') {
@@ -176,16 +136,14 @@ app.message(/.*/, async ({ message, say }) => {
 		userText = userText.replaceAll('```', '');
 		const res = await summaryPrompt(userText);
 		await say(res);
-    } else if (command === 'ref') {
+    } else if (command === 'expand') {
 		await handleRef(channelId, +userText, say);
-    } else if (command === 'ref-block') {
+    } else if (command === 'expand-block') {
 		userText = userText.replaceAll('```', '');
 		const res = await expandKnowledge(userText);
 		await say(res);
     } else if (command === "gif") {
       await handleGif(channelId, +userText, say);
-    } else if (command === "additional") {
-      await handleAdditional(channelId, +userText, say);
     } else if (command === "descriptions") {
       await handleDescribePeople(channelId, +userText, say);
     } else {
@@ -201,18 +159,3 @@ app.message(/.*/, async ({ message, say }) => {
   const blah = await app.client.auth.test();
   botUserId = blah.user_id;
 })();
-
-
-/*
-app.message(':wave:', async ({ message, say }) => {
-  console.log('message', message);
-  // Handle only newly posted messages here
-  if (message.subtype === undefined
-    || message.subtype === 'bot_message'
-    || message.subtype === 'file_share'
-    || message.subtype === 'thread_broadcast') {
-    await say(`Hello, <@${message.user}>`);
-  }
-});
-*/
-
