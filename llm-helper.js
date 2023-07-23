@@ -70,7 +70,7 @@ export const expandKnowledge = async (text) => {
 }
 
 export const findMeGifs = async (text) => { 
-  const text = `
+  const promptText = `
 	The following is a conversation: 
 
 	${text}
@@ -84,14 +84,14 @@ export const findMeGifs = async (text) => {
     temperature: 0.02,
     messages: [
 	  { role: 'system', content: 'Assistant is a large language model' },
-	  { role: 'user', content: text}
+	  { role: 'user', content: promptText }
 	]
   });
   return res.data.choices[0].message.content; 
 }
 
 export const describePeople = async (text) => { 
-  const text = `
+  const promptText = `
 	The following is a conversation: 
 
 	${text}
@@ -105,7 +105,7 @@ export const describePeople = async (text) => {
     temperature: 0.02,
 	messages: [
 	  { role: 'system', content: 'Assistant is a large language model' },
-	  { role: 'user', content: text}
+	  { role: 'user', content: promptText }
 	]
   });
   return res.data.choices[0].message.content; 
